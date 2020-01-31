@@ -1,0 +1,334 @@
+\documentclass{beamer}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{centernot}
+\usepackage{color}
+\usepackage{graphics}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{setspace}
+\usepackage{tikz}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+}
+
+\lstset{
+  backgroundcolor=\color{white},     % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}; should come as last argument
+  basicstyle=\scriptsize\ttfamily,   % the size of the fonts that are used for the code
+  breakatwhitespace=false,           % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                   % sets automatic line breaking
+  captionpos=b,                      % sets the caption-position to bottom
+  commentstyle=\color{dkgreen},      % comment style
+  deletekeywords={...},              % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},            % if you want to add LaTeX within your code
+  extendedchars=true,                % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  firstnumber=1,                     % start line enumeration with line 1000
+  frame=none,                        % adds a frame around the code
+  keepspaces=true,                   % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},         % keyword style
+  language=Bash,                     % the language of the code
+  morekeywords={*,...},              % if you want to add more keywords to the set
+  numbers=left,                      % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                     % how far the line-numbers are from the code
+  numberstyle=\tiny\color{gray},     % the style that is used for the line-numbers
+  rulecolor=\color{black},           % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                  % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,            % underline spaces within strings only
+  showtabs=false,                    % show tabs within strings adding particular underscores
+  stepnumber=2,                      % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mauve},         % string literal style
+  tabsize=2,                         % sets default tabsize to 2 spaces
+  %postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+  %title=\lstname                    % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+\title{From Zero to RAPIDS: \\
+       Accelerating Data Science and Machine Learning \\
+       Workflows on NVIDIA GPUs}
+\author{Marty Kandes, Ph.D. \\
+   Computational \& Data Science Research Specialist \\
+   High-Performance Computing User Services Group \\ 
+   San Diego Supercomputer Center \\
+   University of California, San Diego}
+\date{HPC User Training Series\\
+   Friday, January 31st, 2020 \\
+   2:00PM - 3:00PM PT}
+
+\begin{document}
+\maketitle
+
+\begin{frame}
+   \frametitle{About Me}
+   \begin{itemize}
+      \setlength\itemsep{1.5em}
+      \item \textbf{Work}: HPC User Services Group @ SDSC, Comet
+      \item \textbf{Background}: Computational Physics, Applied Math, HPC
+      \item \textbf{Disclaimer}: \textit{Not} a Data Science or Machine Learning expert
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{From Zero to RAPIDS: An Overview}
+   \begin{itemize}\setlength\itemsep{1.5em}
+      \item A Quick Overview of RAPIDS
+      \item Jupyter Notebook Demo
+      \item Fannie Mae Single-Family Loan Performance Data
+      \item Additional Resources and References
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{What is RAPIDS?}
+   \begin{figure}[htbp]
+      \includegraphics[width=1.0\textwidth]{images/rapids-logo.png}
+   \end{figure}
+   RAPIDS is NVIDIA's new suite of open source software libraries and
+   application programming interfaces (APIs) that aim to give you the
+   ability to accelerate (classical) data science, analytics, and
+   machine learning workflows on NVIDIA GPUs.
+   \\ \ \\
+   \url{https://rapids.ai}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Why RAPIDS?}
+   \begin{itemize}\setlength\itemsep{1.5em}
+      \item \textbf{Fast}: Leverages CUDA primitives to provide you with
+         out-of-the-box low-level GPU compute optimizations
+      \item \textbf{User-Friendly}: Familiar Python interfaces for each
+         library allows you to (quickly) integrate GPU parallelism and 
+         high-bandwidth memory speeds into your existing workflows
+      \item \textbf{Scalable}: Integrates with Dask to allow you to scale-out
+         across multiple-node, multi-GPU systems (more easily)
+      \item \textbf{Open Source}: Licensed under Apache 2.0
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Traditional (CPU-based) Data Science Software Stack}
+   \begin{figure}[htbp]
+      \includegraphics[width=1.0\textwidth]{images/traditional-data-science-software-stack.png}
+   \end{figure}
+\end{frame}
+
+\begin{frame}
+   \frametitle{RAPIDS (GPU-based) Data Science Software Stack}
+   \begin{figure}[htbp]
+      \includegraphics[width=1.0\textwidth]{images/nvidia-rapids-data-science-software-stack.png}
+   \end{figure}
+\end{frame}
+
+\begin{frame}
+   \frametitle{RAPIDS: cuDF}
+   \begin{figure}[htbp]
+      \includegraphics[width=0.8\textwidth]{images/pandas-logo.png}
+   \end{figure}
+   \ \\ \ \\
+   \begin{itemize}\setlength\itemsep{1.5em}
+      \item cuDF is NVIDIA's GPU-accelerated version of Pandas.
+      \item It provides you with a GPU-native DataFrame library for 
+         loading, joining, aggregating, filtering, and otherwise 
+         manipulating data.
+      \item It provides you with a familiar Pandas-like Python API that
+         aims to easily accelerate your Pandas-based workflows on NVIDIA 
+         GPUs without having to understand the details of CUDA programming.
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{RAPIDS: cuML}
+   \begin{figure}[htbp]
+      \includegraphics[width=0.5\textwidth]{images/scikit-learn-logo.png}
+   \end{figure}
+   \ \\ \ \\
+   \begin{itemize}\setlength\itemsep{1.5em}
+      \item cuML is NVIDIA's GPU-accelerated version of Scikit-learn.
+      \item It provides you with a GPU-acclerated library of standard 
+         statistical and (classical) machine learning algorthms: Linear
+         Regression, K-Means, SVD, etc.
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{RAPIDS: cuGraph}
+   \begin{itemize}\setlength\itemsep{1.5em}
+      \item cuGraphs is NVIDIA's GPU-acclerated version of NetworkX. 
+      \item It provides you with a collection of graph analytics 
+         algorithms that can be used to process data found in cuDF 
+         DataFrames: Page Rank, Breadth First Search, etc.
+      \item Up to 500M edges on a single 32 GB NVIDIA GPU; scales to
+         billions of edges on multi-GPUs.
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{RAPIDS: cuSpatial}
+   \begin{itemize}\setlength\itemsep{1.5em}
+      \item cuSpatial is NVIDIA's GPU-acclerated library for geospatial
+         and spatiotemporal data processing.
+      \item It provides you with a collection of common spatial and 
+         spatiotemporal operations: point-in-polygon tests, distances 
+         between trajectories, trajectory clustering, etc.
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Jupyter Notebook Demo}
+   \begin{figure}[htbp]
+      \includegraphics[width=0.7\textwidth]{images/the-big-short.png}
+   \end{figure}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Fannie Mae Single-Family Loan Performance Data}
+   \begin{figure}[htbp]
+      \includegraphics[width=0.8\textwidth]{images/fannie-mae-sflp-website.png}
+   \end{figure}
+   \url{https://www.fanniemae.com/portal/funding-the-market/data/loan-performance-data.html}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Why the Fannie Mae SFLP Dataset?}
+   \begin{itemize}\setlength\itemsep{1.5em}
+      \item \textbf{Large in Size}: The dataset contains more than 1.9 
+         billion records on 37 million 30-year fixed rate mortgages. It
+         is approximately 200 GB uncompressed.
+      \item \textbf{Growing}: The dataset is updated quarterly by Fannie Mae.
+      \item \textbf{Well-documented}: Fannie Mae provides an in-depth tutorial
+         on analyzing the dataset with R/SAS code examples. NVIDIA has 
+         also featured the dataset in previous RAPIDS demonstrations.
+      \item \textbf{Easily accessible}: The dataset can be downloaded for free
+         from Fannie Mae. Several subsets are available from NVIDIA on 
+         the RAPIDS website. 
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{What is Fannie Mae?}
+   \vspace{-1.0em}
+   \begin{figure}[htbp]
+      \includegraphics[width=0.3\textwidth]{images/fannie-mae-logo.png}
+   \end{figure}
+   \begin{itemize}\setlength\itemsep{1.0em}
+      \item Federal National Mortgage Association (FNMA)
+      \item Government-Sponsored Enterprise
+      \item Founded in 1938
+      \item Created the secondary mortgage market in the U.S.
+      \item Became a publicly traded company in 1968
+      \item Placed into conservatorship by U.S. federal government in 
+            2008 along with Freddie Mac
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{What does Fannie Mae do?}
+   \begin{figure}[htbp]
+      \includegraphics[width=1.0\textwidth]{images/how-does-fannie-mae-work.jpg}
+   \end{figure}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Size of U.S. Residential Mortgage Market}
+   \begin{figure}[htbp]
+      \includegraphics[width=0.8\textwidth]{images/mortgage-market-size.jpg}
+   \end{figure}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Conforming Mortgage Loans}
+   \begin{itemize}\setlength\itemsep{1.0em}
+      \item Primary type of mortgage loans that Fannie Mae and other 
+         GSEs can purchase.
+      \item Limits maximum loan amount for a given type of property
+      \item In 2019, the standard conforming loan limit for a single 
+         family home was \$484,350. 
+      \item \textit{Jumbo conforming loan limits}: In 2008, conforming 
+         loan limits in high cost areas were raised to \$729,750 or 
+         125\% of the median home value within the metropolitan
+         statistical area, whichever is the lesser.
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   Okay, let's go to the Jupyter Notebook demo ...
+   \\ \ \\
+   \url{https://github.com/mkandes/presentations/blob/master/2020/01/31/from-zero-to-rapids/notebooks/fannie-mae-sflp.ipynb}
+\end{frame}
+
+\begin{frame}
+   \frametitle{How to run the Jupyter Notebook on Comet}
+   \begin{enumerate}\setlength\itemsep{0.5em}
+      \item Obtain an interactive session on one of Comet's GPU nodes. \\
+         \lstinputlisting[language=Bash]{code/interactive-gpu.sh}
+      \item Navigate to the directory where your notebook is located. \\
+         \lstinputlisting[language=Bash]{code/notebook-dir.sh} 
+      \item Shell into the RAPIDS Singularity container. \\
+         \lstinputlisting[language=Bash]{code/rapids-container.sh}
+      \item Start up Jupyter Lab from inside the container. \\
+         \lstinputlisting[language=Bash]{code/jupyter-lab.sh} 
+      \item Copy the (remote) URL and token into your browser. \\
+         \url{http://comet-3X-XX.sdsc.edu:8888/?token=4f8c8b19748146a2f5b53d0223880d5363ee31b8efee2cb5}
+   \end{enumerate}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Additional Resources and References}
+   \begin{itemize}\setlength\itemsep{1.5em}
+      \item \textbf{Homepage}: \url{https://rapids.ai}
+      \item \textbf{Blog}: \url{https://medium.com/rapids-ai}
+      \item \textbf{Intro Tutorials}: \url{https://docs.rapids.ai/start}
+      \item \textbf{GitHub}: \url{https://github.com/rapidsai}
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Jupyter Notebooks}
+   \begin{itemize}\setlength\itemsep{1.5em}
+      \item \textbf{NVIDIA Notebooks}: \url{https://github.com/rapidsai/notebooks}
+      \item \textbf{Community Contributed Notebooks}: \url{https://github.com/rapidsai/notebooks-contrib}
+      \item \textbf{Using RAPIDS + PyTorch on the SFLP Dataset}: \url{https://github.com/rapidsai/notebooks-contrib/tree/branch-0.12/blog_notebooks/mortgage_deep_learning}
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{RAPIDS API Documentation}
+   \begin{itemize}\setlength\itemsep{1.5em}
+      \item \url{https://rapidsai.github.io/projects/cudf/en/0.11.0/api.html}
+      \item \url{https://rapidsai.github.io/projects/cuml/en/0.11.0/api.html}
+      \item \url{https://rapidsai.github.io/projects/cugraph/en/0.11.0/api.html}
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Recent and Upcoming RAPIDS-Related Training Events}
+   \textit{CUDA-Python and RAPIDS for blazing fast scientific computing}
+   \\ \ \\
+   Abraham Stern, Solutions Architect, NVIDIA 
+   \\ \ \\
+   \begin{itemize}\setlength\itemsep{1.5em}
+      \item \textbf{XSEDE ECSS Symposium} \\
+            Tuesday, January 21st, 2020 \\
+            \url{https://youtu.be/NdKWEkV9X34}  
+      \item \textbf{XSEDE Webinar} \\
+            Thursday, February 20, 2020 \\
+\url{https://www.sdsc.edu/education_and_training/training/202002_gpu_accelerated_computing_with_cuda_python.html}
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Questions?}
+   \begin{figure}[htbp]
+      \includegraphics[width=0.6\textwidth]{images/bill-excels.jpg}
+   \end{figure}
+\end{frame}
+
+\end{document}
